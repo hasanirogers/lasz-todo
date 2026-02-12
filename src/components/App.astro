@@ -1,0 +1,41 @@
+<h1>Todo App with the LASZ Stack</h1>
+<kemet-card>
+  <todo-input label="Add"></todo-input>
+  <todo-list></todo-list>
+  <todo-footer slot="footer"></todo-footer>
+</kemet-card>
+<script>
+  // astro knows to load the following on the client
+  // ---
+  // we want these design system elements to load globally
+  import 'kemet-ui/elements/card';
+  import 'kemet-ui/elements/button';
+  // these are our LASZ elements
+  import '../elements/todo-input/todo-input';
+  import '../elements/todo-list/todo-list';
+  import '../elements/todo-footer/todo-footer';
+</script>
+<style>
+  kemet-card {
+    --kemet-card-background-color: rgb(var(--kemet-color-gray-900));
+    --kemet-card-border: 0;
+    --kemet-card-max-width: 960px;
+    --kemet-card-footer-border-top: 1px solid rgb(var(--kemet-color-gray-800));
+    --kemet-card-color: rgb(var(--kemet-color-gray-300));
+    --kemet-card-border-radius: 1rem;
+  
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  @media screen and (min-width: 720px) {
+    kemet-card {
+      width: 66vw;
+    }
+  }
+
+  todo-list {
+    min-height: 240px;
+  }
+</style>

@@ -1,0 +1,19 @@
+{
+  "name": "@example/basics",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^5.17.1",
+    "kemet-ui": "^4.1.0",
+    "lit": "^3.3.2",
+    "lodash-es": "^4.17.23",
+    "zustand": "^5.0.11"
+  }
+}
