@@ -20,9 +20,6 @@ export class TodoList extends LitElement {
      }) 
   );
 
-  // @property()
-  // todos: ITodoItem[] = this.todoState.todoList;
-
   render() {
     return this.makeTodos();
   }

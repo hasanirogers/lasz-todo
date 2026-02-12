@@ -1,4 +1,4 @@
-import type { ReactiveController,ReactiveControllerHost } from 'lit';
+import type { ReactiveController, ReactiveControllerHost } from 'lit';
 import type { StoreApi } from 'zustand';
 
 export class ZustandController<S, D, A = void> implements ReactiveController {
@@ -9,12 +9,17 @@ export class ZustandController<S, D, A = void> implements ReactiveController {
   constructor(
     private host: ReactiveControllerHost,
     private store: StoreApi<S>,
-    selector: (state: S) => D,
+    private selector: (state: S) => D,
     actionsSelector?: (state: S) => A 
   ) {
     this.host.addController(this);
+
+    // we're divided up our state into two categories
+    // "data" and "actions"
+    // read data such as a todo list
+    /// actions set data such as adding to a todo list
     
-    // Initializing state
+    // Initializing data
     const initialState = this.store.getState();
     this.data = selector(initialState);
     
@@ -22,19 +27,20 @@ export class ZustandController<S, D, A = void> implements ReactiveController {
     if (actionsSelector) {
       this.actions = actionsSelector(initialState);
     }
-
-    // Subscription logic
-    this.hostConnected = () => {
-      this._unsubcribe = this.store.subscribe((state: S) => {
-        this.data = selector(state);
-        this.host.requestUpdate();
-      });
-    };
   }
 
-  hostConnected() {} 
+  // called when element is added to the page
+  hostConnected() {
+     // .subscribe() returns a clean up function that we can store and call later
+     this._unsubcribe = this.store.subscribe((state: S) => {
+      this.data = this.selector(state);
+      this.host.requestUpdate();
+    });
+  } 
 
+  // called when element is removed from the page
   hostDisconnected() {
+    // prevent memory leaks by unsubscribing when disconnected
     this._unsubcribe?.();
   }
 }
