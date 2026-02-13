@@ -4,16 +4,22 @@
   <todo-list></todo-list>
   <todo-footer slot="footer"></todo-footer>
 </kemet-card>
+<todo-login-button></todo-login-button>
+<todo-modals></todo-modals>
 <script>
   // astro knows to load the following on the client
   // ---
   // we want these design system elements to load globally
   import 'kemet-ui/elements/card';
   import 'kemet-ui/elements/button';
+  import 'kemet-ui/elements/fab';
+  import 'kemet-ui/elements/icon-bootstrap';
   // these are our LASZ elements
   import '../elements/todo-input/todo-input';
   import '../elements/todo-list/todo-list';
   import '../elements/todo-footer/todo-footer';
+  import '../elements/todo-login-button/todo-login-button';
+  import '../elements/todo-modals/todo-modals';
 </script>
 <style>
   kemet-card {
@@ -23,19 +29,23 @@
     --kemet-card-footer-border-top: 1px solid rgb(var(--kemet-color-gray-800));
     --kemet-card-color: rgb(var(--kemet-color-gray-300));
     --kemet-card-border-radius: 1rem;
-  
+
     display: flex;
     gap: 1rem;
     width: 100%;
-  }
 
-  @media screen and (min-width: 720px) {
-    kemet-card {
+    @media (width > 720px) {
       width: 66vw;
     }
   }
 
   todo-list {
     min-height: 240px;
+  }
+
+  todo-login-button {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
   }
 </style>
