@@ -2,26 +2,23 @@ import type { DirectiveResult } from 'lit/async-directive.js';
 import { UnsafeHTMLDirective } from 'lit/directives/unsafe-html.js';
 import { createStore } from 'zustand/vanilla';
 
-export interface IAlertStore {
+interface IAlertConfig {
   message: string | DirectiveResult<typeof UnsafeHTMLDirective>;
-  setMessage: (message: string | DirectiveResult<typeof UnsafeHTMLDirective>) => void;
-  status: string;
-  setStatus: (status: string) => void;
   opened: boolean;
-  setOpened: (opened: boolean) => void;
-  icon: string;
-  setIcon: (icon: string) => void;
+  overlay?: string;
+  status?: string;
+  icon?: string;
+  closeable?: boolean;
+}
+
+export interface IAlertStore {
+  config: IAlertConfig;
+  setConfig: (options: IAlertConfig) => void;
 }
 
 const store = createStore<IAlertStore>(set => ({
-  message: '',
-  setMessage: (message: string | DirectiveResult<typeof UnsafeHTMLDirective>) => set(() => { return { message } }),
-  status: 'standard',
-  setStatus: (status: string) => set(() => { return { status } }),
-  opened: false,
-  setOpened: (opened: boolean) => set(() => { return { opened } }),
-  icon: 'info',
-  setIcon: (icon: string) => set(() => { return { icon } }),
+  config: { message: '', opened: false, icon: 'exclamation-triangle', closeable: true },
+  setConfig: (options: IAlertConfig) => set(() => { return { config: options } }),
 }));
 
 export default store;

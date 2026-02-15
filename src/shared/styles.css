@@ -85,3 +85,18 @@ ol.abc {
     --kemet-popper-width: 480px;
   }
 }
+
+kemet-alert {
+  --kemet-alert-padding: 0.5rem 1rem;
+}
+
+kemet-alert[status="error"] {
+  --kemet-alert-border: 3px solid rgb(var(--kemet-color-error) / 20%);
+}
+
+kemet-alert[status="success"] {
+  --kemet-alert-border: 3px solid rgb(var(--kemet-color-success) / 20%);
+}
+
+
+

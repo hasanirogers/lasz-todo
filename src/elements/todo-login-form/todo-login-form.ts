@@ -1,7 +1,6 @@
 import { LitElement, html, unsafeCSS } from 'lit';
 import { customElement, query, state } from 'lit/decorators.js';
-import profileStore, { type IProfileStore } from '../../stores/profile';
-import alertStore, { type IAlertStore } from '../../stores/alert';
+import alertStore from '../../stores/alert';
 import styles from './todo-login-form.css?inline';
 import sharedStyles from '../../shared/styles.css?inline';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
@@ -9,6 +8,7 @@ import type KemetInput from 'kemet-ui/elements/input.mjs';
 
 import 'kemet-ui/elements/input';
 import 'kemet-ui/elements/field';
+import { ZustandController } from '../../controllers/zustand';
 
 @customElement('todo-login-form')
 export default class TodoLoginForm extends LitElement {
@@ -21,10 +21,12 @@ export default class TodoLoginForm extends LitElement {
   disabled: boolean = false;
 
   @state()
-  profileState: IProfileStore = profileStore.getInitialState();
-
-  @state()
-  alertState: IAlertStore = alertStore.getInitialState();
+  alertState = new ZustandController(
+    this,
+    alertStore,
+    () => ({}),
+    (state) => ({ setConfig: state.setConfig })
+  );
 
   @query('form[action*=auth]')
   loginForm!: HTMLFormElement;
@@ -35,7 +37,12 @@ export default class TodoLoginForm extends LitElement {
   render() {
     return html`
       <section>
-        ${this.success ? html`<div class="success"><kemet-icon icon="check-lg" size="72"></kemet-icon><h2>Check your email for a magic link to login.</h2></div>` : null}
+        ${this.success ? html`
+          <kemet-alert opened filled status="success">
+            <kemet-icon-bootstrap icon="check-lg" size="32"></kemet-icon-bootstrap>
+            <h3>Check your email for a magic link to login.</h3>
+          </kemet-alert>
+        ` : null}
         <form method="post" action="api/auth/login" @submit=${(event: SubmitEvent) => this.handleLogin(event)} novalidate>
           <kemet-field label="Enter your email">
             <kemet-input required slot="input" name="identifier" ?disabled=${this.disabled} rounded filled></kemet-input>
@@ -70,10 +77,12 @@ export default class TodoLoginForm extends LitElement {
       .then(async response => {
         // bad access
         if (response.error) {
-          this.alertState.setStatus('error');
-          this.alertState.setMessage(unsafeHTML(response.message));
-          this.alertState.setOpened(true);
-          this.alertState.setIcon('exclamation-circle');
+          this.alertState.actions && this.alertState.actions.setConfig({
+            status: 'error',
+            message: response.message,
+            opened: true,
+            icon: 'exclamation-circle'
+          });
           this.disabled = false;
           return;
         }

@@ -17,7 +17,7 @@ export class TodoSplash extends LitElement {
 
   render() {
     return html`
-      <img src="/logo.png" width="512" height="512" alt="LASZ stack logo" />
+      <img src="/logo.webp" width="512" height="545" alt="LASZ stack logo" fetchpriority="high" preload="auto" />
       <div>A LASZ stack app</div>
     `;
   }

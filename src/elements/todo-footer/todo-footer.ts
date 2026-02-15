@@ -5,6 +5,7 @@ import todoStore from '../../stores/todo';
 import profileStore from '../../stores/profile';
 
 import styles from './todo-footer.css?inline';
+import { saveTodos } from '../../shared/crud';
 
 
 @customElement('todo-footer')
@@ -24,7 +25,11 @@ export class TodoFooter extends LitElement {
   private profileState = new ZustandController(
     this,
     profileStore,
-    (state) => ({ email: state.profile.email })
+    (state) => ({
+      email: state.profile.email,
+      id: state.profile.id,
+      isLoggedIn: state.isLoggedIn
+    })
   );
 
   @property()
@@ -34,11 +39,10 @@ export class TodoFooter extends LitElement {
   todoInput!: HTMLInputElement;
 
   render() {
-    console.log('profileState', this.profileState.data);
     return html`
       ${this.makeSignedInText()}
       <footer>
-        <span>Number of Items: <strong>${this.todoState.data.list.length}</strong></span>
+        <span>Total Todos: <strong>${this.todoState.data.list.length}</strong></span>
         <kemet-button rounded @click=${() => this.handleClearAll()}>Clear All</kemet-button>
       </footer>
     `
@@ -46,6 +50,10 @@ export class TodoFooter extends LitElement {
 
   private handleClearAll() {
     this.todoState.actions && this.todoState.actions.removeAll();
+    this.profileState.data.isLoggedIn && saveTodos({
+      id: this.profileState.data.id,
+      todos: this.todoState.data.list,
+    });
   }
 
   private makeSignedInText() {
