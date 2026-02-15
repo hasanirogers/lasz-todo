@@ -1,3 +1,4 @@
+<img src="/logo.png" width="196" height="196" alt="LASZ stack logo" />
 <h1>Todo App with the LASZ Stack</h1>
 <kemet-card>
   <todo-input label="Add"></todo-input>
@@ -6,6 +7,7 @@
 </kemet-card>
 <todo-login-button></todo-login-button>
 <todo-modals></todo-modals>
+<todo-splash></todo-splash>
 <script>
   // astro knows to load the following on the client
   // ---
@@ -20,8 +22,13 @@
   import '../elements/todo-footer/todo-footer';
   import '../elements/todo-login-button/todo-login-button';
   import '../elements/todo-modals/todo-modals';
+  import '../elements/todo-splash/todo-splash';
 </script>
 <style>
+  h1, h2, h3 {
+    line-height: 1.2;
+  }
+
   kemet-card {
     --kemet-card-background-color: rgb(var(--kemet-color-gray-900));
     --kemet-card-border: 0;

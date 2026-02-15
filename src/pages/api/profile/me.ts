@@ -21,7 +21,7 @@ export const GET: APIRoute = async () => {
     console.log(session.user);
 
     const { data: profile, error: profileError } = await supabase
-      .from('Profiles')
+      .from('profiles')
       .select('*')
       .eq('uuid', session.user.id)
       .single();

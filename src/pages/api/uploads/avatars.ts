@@ -22,7 +22,7 @@ export const POST: APIRoute = async ({ params, request }) => {
 
       if (storageData) {
         const { error: profileError } = await supabase
-          .from('Profiles')
+          .from('profiles')
           .update({
             avatar: storageData.path
           })
@@ -92,7 +92,7 @@ export const DELETE: APIRoute = async ({ params , request }) => {
 
     // Step 4: Update profile
     const { error: profileError } = await supabase
-      .from('Profiles')
+      .from('profiles')
       .update({ avatar: null })
       .eq('id', params.user_id);
 

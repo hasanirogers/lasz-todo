@@ -9,7 +9,7 @@ export const GET: APIRoute = async ({ params }) => {
     const userId = params.id;
 
     const { data: profile, error: profileError } = await supabase
-      .from('Profiles')
+      .from('profiles')
       .select('*')
       .eq('id', userId)
       .single();
@@ -49,7 +49,7 @@ export const GET: APIRoute = async ({ params }) => {
     }
 
     const { data: followers, error: followersError } = await supabase
-      .from('Profiles')
+      .from('profiles')
       .select('*')
       .filter('following', 'cs', parseInt(userId as string));
 
@@ -95,7 +95,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
     delete body.filepond;
 
     const { error } = await supabase
-      .from('Profiles')
+      .from('profiles')
       .update(body)
       .eq('id', userId)
 
