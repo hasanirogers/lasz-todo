@@ -10,6 +10,7 @@ export interface ITodoItem {
 export interface ITodoStore {
   todoList: ITodoItem[];
   addTodo: (newTodo: ITodoItem) => void;
+  addTodoAll: (newTodos: ITodoItem[]) => void;
   removeTodo: (index: number) => void;
   removeTodoAll: () => void;
   todoToggle: (index: number) => void;
@@ -18,6 +19,7 @@ export interface ITodoStore {
 const store = createStore<ITodoStore>(set => ({
   todoList: [],
   addTodo: (newTodo) => set(state => ({ todoList: [...state.todoList, newTodo] })),
+  addTodoAll: (newTodos) => set(state => ({ todoList: [...state.todoList, ...newTodos] })),
   removeTodo: (index) => set(state => {
     lodashPullAt(state.todoList, index)
     return { todoList: state.todoList };

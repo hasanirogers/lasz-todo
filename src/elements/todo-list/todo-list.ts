@@ -2,7 +2,9 @@ import { LitElement, html, unsafeCSS } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { ZustandController } from '../../controllers/zustand';
 import todoStore, { type ITodoItem } from '../../stores/todo';
+import profileStore from '../../stores/profile';
 import styles from './todo-list.css?inline';
+import { fetchTodos, saveTodos } from '../../shared/crud';
 
 @customElement('todo-list')
 export class TodoList extends LitElement {
@@ -14,11 +16,23 @@ export class TodoList extends LitElement {
     this,
     todoStore,
     (state) => ({ list: state.todoList }),
-    (state) => ({ 
+    (state) => ({
       remove: state.removeTodo,
-      toggle: state.todoToggle
-     }) 
+      toggle: state.todoToggle,
+      addAll: state.addTodoAll
+     })
   );
+
+  @state()
+  private profileState = new ZustandController(
+    this,
+    profileStore,
+    (state) => ({ id: state.profile.id, isLoggedIn: state.isLoggedIn })
+  );
+
+  firstUpdated() {
+    this.profileState.data.isLoggedIn && fetchTodos(this.profileState.data.id);
+  }
 
   render() {
     return this.makeTodos();
@@ -39,12 +53,20 @@ export class TodoList extends LitElement {
 
   handleRemoveTodo(index: number) {
     this.todoState.actions && this.todoState.actions.remove(index);
+    this.profileState.data.isLoggedIn && saveTodos({
+      id: this.profileState.data.id,
+      todos: this.todoState.data.list,
+    });
     this.requestUpdate(); // state has been modified by lodash, so re-render
   }
 
   handleChecked(index: number) {
     this.todoState.actions && this.todoState.actions.toggle(index);
-    this.requestUpdate(); // state has been modified by lodash, so re-render
+    this.profileState.data.isLoggedIn && saveTodos({
+      id: this.profileState.data.id,
+      todos: this.todoState.data.list,
+    });
+    this.requestUpdate();
   }
 }
 
