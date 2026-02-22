@@ -1,14 +1,19 @@
 import type { APIRoute } from "astro";
-import 'dotenv/config'
+import 'dotenv/config';
 import { supabase } from "../../../shared/database";
 
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request }) => {
-  const url = new URL(request.url);
-  // const origin = url.origin;
   const body = await request.json();
   const { accessToken, refreshToken } = body;
+
+  if (!supabase) {
+    return new Response(
+      JSON.stringify({ success: false, message: "Supabase is not configured." }),
+      { status: 500 }
+    );
+  }
 
   try {
     const { data, error } = await supabase.auth.setSession({

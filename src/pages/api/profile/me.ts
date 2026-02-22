@@ -1,10 +1,17 @@
 import type { APIRoute } from "astro";
-import 'dotenv/config'
+import 'dotenv/config';
 import { supabase, supabaseAdmin } from "../../../shared/database";
 
 export const prerender = false;
 
 export const GET: APIRoute = async () => {
+  if (!supabase) {
+    return new Response(
+      JSON.stringify({ success: false, message: "Supabase is not configured." }),
+      { status: 500 }
+    );
+  }
+
   try {
     const {
       data: { session },
@@ -18,15 +25,11 @@ export const GET: APIRoute = async () => {
       );
     }
 
-    console.log(session.user);
-
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('*')
       .eq('uuid', session.user.id)
       .single();
-
-    console.log(profile);
 
     if (profile) {
       const data = { ...profile };
@@ -49,6 +52,13 @@ export const GET: APIRoute = async () => {
 }
 
 export const DELETE: APIRoute = async () => {
+  if (!supabase || !supabaseAdmin) {
+    return new Response(
+      JSON.stringify({ success: false, message: "Supabase is not configured." }),
+      { status: 500 }
+    );
+  }
+
   try {
     const {
       data: { session },
@@ -66,44 +76,10 @@ export const DELETE: APIRoute = async () => {
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(session.user.id);
 
     if (deleteError) {
-      console.log(deleteError);
       return new Response(
         JSON.stringify({ success: false, message: deleteError.message, error: deleteError }),
         { status: 500 }
       )
-    }
-
-    // Delete user's avatar files
-    // Step 1: List all files in the user's folder
-    const { data: files, error: listError } = await supabase
-      .storage
-      .from('avatars')
-      .list(`${session.user.id}`, { limit: 100 });
-
-    if (listError) {
-      console.error(listError);
-      return new Response(JSON.stringify({ success: false, message: "Failed to list files.", error: listError }), {
-        status: 500,
-      });
-    }
-
-    // Step 2: Construct file paths for deletion
-    const filePaths = files.map(file => `${session.user.id.toString()}/${file.name}`);
-
-    // Step 3: Delete files
-    if (filePaths.length > 0) {
-      const { error: storageError } = await supabase
-        .storage
-        .from('avatars')
-        .remove(filePaths);
-
-      if (storageError) {
-        console.log(storageError);
-        return new Response(
-          JSON.stringify({ success: false, message: "Failed to delete avatar.", error: storageError }),
-          { status: 400 }
-        );
-      }
     }
 
     return new Response(

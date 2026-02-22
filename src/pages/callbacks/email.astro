@@ -23,10 +23,13 @@ import Layout from '../../layouts/Layout.astro';
     const data = await response.json();
 
     if (data.error) {
-      alertState?.setStatus('error');
-      alertState?.setMessage(data.error.message);
-      alertState?.setOpened(true);
-      alertState?.setIcon('exclamation-circle');
+      alertState.setConfig({
+        opened: true,
+        status: 'error',
+        message: data.error.message,
+        icon: 'exclamation-circle',
+        closeable: true,
+      })
     } else {
       window.location.href = '/';
     }

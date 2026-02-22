@@ -3,9 +3,17 @@ import { customElement, state } from 'lit/decorators.js';
 import { ZustandController } from '../../controllers/zustand';
 import profileStore from '../../stores/profile';
 import modalsStore from '../../stores/modals';
+import appStore from '../../stores/app';
 
 @customElement('todo-login-button')
 export class TodoLoginButton extends LitElement {
+  @state()
+  private appState = new ZustandController(
+    this,
+    appStore,
+    (state) => ({ supabaseConfigured: state.supabaseConfigured })
+  );
+
   @state()
   private loginState = new ZustandController(
     this,
@@ -23,12 +31,13 @@ export class TodoLoginButton extends LitElement {
   );
 
   render() {
-    return html`
-      <kemet-fab pill @click=${() =>this.handleClick()} tabindex="0" role="button">
-        <kemet-icon-bootstrap slot="icon" icon="door-open-fill"></kemet-icon-bootstrap>
-        ${this.loginState.data.isLoggedIn ? 'Logout' : 'Login'}
-      </kemet-fab>
-    `;
+    return this.appState.data.supabaseConfigured
+      ? html`
+        <kemet-fab pill @click=${() =>this.handleClick()} tabindex="0" role="button">
+          <kemet-icon-bootstrap slot="icon" icon="door-open-fill"></kemet-icon-bootstrap>
+          ${this.loginState.data.isLoggedIn ? 'Logout' : 'Login'}
+        </kemet-fab>`
+      : null;
   }
 
   private handleClick() {

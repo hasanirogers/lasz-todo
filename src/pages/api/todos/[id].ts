@@ -1,11 +1,18 @@
 import type { APIRoute } from "astro";
-import 'dotenv/config'
+import 'dotenv/config';
 import { supabase } from "../../../shared/database";
 
 export const prerender = false;
 
 export const GET: APIRoute = async ({ params }) => {
-try {
+  if (!supabase) {
+    return new Response(
+      JSON.stringify({ success: false, message: "Supabase is not configured." }),
+      { status: 500 }
+    );
+  }
+
+  try {
     const userId = Number(params.id);
     const { data, error } = await supabase
       .from('todos')
@@ -34,6 +41,13 @@ try {
 }
 
 export const PUT: APIRoute = async ({ params, request }) => {
+  if (!supabase) {
+    return new Response(
+      JSON.stringify({ success: false, message: "Supabase is not configured." }),
+      { status: 500 }
+    );
+  }
+
   try {
     const userId = Number(params.id);
     const body = await request.json();
